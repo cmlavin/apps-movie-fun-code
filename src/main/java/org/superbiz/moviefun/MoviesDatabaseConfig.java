@@ -4,6 +4,7 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -16,18 +17,32 @@ import javax.sql.DataSource;
 @Configuration
 public class MoviesDatabaseConfig {
 
-    @Bean
+  /*  @Bean
     public DataSource moviesDataSource(DatabaseServiceCredentials serviceCredentials) {
         MysqlDataSource dataSource = new MysqlDataSource();
         dataSource.setURL(serviceCredentials.jdbcUrl("movies-mysql", "p-mysql"));
         HikariConfig config = new HikariConfig();
         config.setDataSource(dataSource);
         return new HikariDataSource(config);
+    }*/
+
+    @Bean
+    public DataSource moviesDataSource(
+            @Value("${moviefun.datasources.movies.url}") String url,
+            @Value("${moviefun.datasources.movies.username}") String username,
+            @Value("${moviefun.datasources.movies.password}") String password
+    ) {
+        MysqlDataSource dataSource = new MysqlDataSource();
+        dataSource.setURL(url);
+        dataSource.setUser(username);
+        dataSource.setPassword(password);
+        return dataSource;
     }
+
 
     @Bean
     @Qualifier("movies")
-    LocalContainerEntityManagerFactoryBean moviesEntityManagerFactoryBean(DataSource moviesDataSource, HibernateJpaVendorAdapter jpaVendorAdapter) {
+    LocalContainerEntityManagerFactoryBean moviesEntityManagerFactory(DataSource moviesDataSource, HibernateJpaVendorAdapter jpaVendorAdapter) {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setDataSource(moviesDataSource);
         factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
@@ -37,7 +52,9 @@ public class MoviesDatabaseConfig {
     }
 
     @Bean
-    PlatformTransactionManager moviesTransactionManager(@Qualifier("movies") LocalContainerEntityManagerFactoryBean factoryBean) {
-        return new JpaTransactionManager(factoryBean.getObject());
+    PlatformTransactionManager moviesTransactionManager( @Qualifier("movies") LocalContainerEntityManagerFactoryBean moviesEntityManagerFactory) {
+        return new JpaTransactionManager(moviesEntityManagerFactory.getObject());
     }
+
+
 }

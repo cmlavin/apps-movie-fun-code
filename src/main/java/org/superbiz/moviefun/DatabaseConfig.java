@@ -9,11 +9,11 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 @Configuration
 public class DatabaseConfig {
 
-    @Bean
+   /* @Bean
     DatabaseServiceCredentials serviceCredentials(@Value("${vcap.services}") String vcapSerivces) {
         return new DatabaseServiceCredentials(vcapSerivces);
     }
-
+*/
     @Bean
     HibernateJpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
