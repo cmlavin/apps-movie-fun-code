@@ -14,3 +14,13 @@ spring:
 logging.level:
   root: WARN
   org.superbiz.moviefun: DEBUG
+
+rabbitmq:
+  uri: amqp://guest:guest@localhost
+  queue: my-rabbit-queue
+
+s3:
+  endpointUrl: http://127.0.0.1:9000
+  accessKey: AKIAJZPIY54DZD6MQS7A
+  secretKey: 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
+  bucketName: pal-moviefun
